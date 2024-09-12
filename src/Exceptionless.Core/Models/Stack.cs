@@ -95,6 +95,18 @@ public class Stack : IOwnedByOrganizationAndProjectWithIdentity, IHaveDates, ISu
     /// </summary>
     public ICollection<string> References { get; set; } = new Collection<string>();
 
+    //Abschlussprojekt
+    /// <summary>
+    /// The id of the linked DevOps work item.
+    /// </summary>
+    public string? DevOpsWorkItemId { get; set; }
+
+    /// <summary>
+    /// The state of the linked DevOps work item.
+    /// </summary>
+    public string? DevOpsWorkItemState { get; set; }
+    // -
+
     /// <summary>
     /// A list of tags used to categorize this stack.
     /// </summary>
