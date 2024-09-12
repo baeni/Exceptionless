@@ -40,6 +40,7 @@
                     hotkeys.del("shift+m");
                     hotkeys.del("shift+p");
                     hotkeys.del("shift+r");
+                    hotkeys.del("shift+w");
                     hotkeys.del("shift+Fbackspace");
 
                     hotkeys
@@ -104,6 +105,16 @@
                                 vm.addReferenceLink();
                             },
                         })
+                        // Abschlussprojekt
+                        .add({
+                            combo: "shift+w",
+                            description: translateService.T("Link DevOps Work Item"),
+                            callback: function linkDevOpsWorkItem() {
+                                  logFeatureUsage("Link DevOps Work Item");
+                                vm.linkDevOpsWorkItem();
+                            },
+                        })
+                        // -
                         .add({
                             combo: "shift+backspace",
                             description: translateService.T("Delete Stack"),
@@ -142,6 +153,40 @@
                         })
                         .catch(function (e) {});
                 }
+
+                // Abschlussprojekt
+                function linkDevOpsWorkItem() {
+                    $ExceptionlessClient.submitFeatureUsage(vm._source + ".linkDevOpsWorkItem");
+                    return dialogs
+                        .create("app/stack/link-devops-workitem-dialog.tpl.html", "LinkDevOpsWorkItemDialog as vm")
+                        .result.then(function (devOpsWorkItemId) {
+                            function onSuccess() {
+                                $ExceptionlessClient
+                                    .createFeatureUsage(vm._source + ".linkDevOpsWorkItem.success")
+                                    .setProperty("devOpsWorkItemId", devOpsWorkItemId)
+                                    .submit();
+                                vm.stack.dev_ops_work_item_id = devOpsWorkItemId;
+                                vm.stack.dev_ops_work_item_state = "Fetching...";
+                                console.log(".linkDevOpsWorkItem.success");
+                            }
+
+                            function onFailure() {
+                                $ExceptionlessClient
+                                    .createFeatureUsage(vm._source + ".linkDevOpsWorkItem.error")
+                                    .setProperty("devOpsWorkItemId", devOpsWorkItemId)
+                                    .submit();
+                                notificationService.error(
+                                    translateService.T("An error occurred while linking a DevOps Work Item.")
+                                );
+                                console.log(".linkDevOpsWorkItem.error");
+                            }
+
+                            if (vm.stack.dev_ops_work_item_id !== devOpsWorkItemId)
+                                return stackService.linkDevOpsWorkItem(vm._stackId, devOpsWorkItemId).then(onSuccess, onFailure);
+                        })
+                        .catch(function (e) {});
+                }
+                // -
 
                 function buildUserStat(users, totalUsers) {
                     if (totalUsers === 0) {
@@ -203,7 +248,7 @@
                     if (data && data.type === "PersistentEvent") {
                         return updateStats();
                     }
-
+                    
                     return getStack().then(updateStats).then(getProject);
                 }
 
@@ -475,6 +520,42 @@
                         })
                         .catch(function (e) {});
                 }
+
+                // Abschlussprojekt
+                function unlinkDevOpsWorkItem() {
+                    $ExceptionlessClient
+                        .createFeatureUsage(vm._source + ".unlinkDevOpsWorkItem")
+                        .setProperty("id", vm._stackId)
+                        .submit();
+                    return dialogService
+                        .confirmDanger(
+                            translateService.T("Are you sure you want to unlink this DevOps Work Item?"),
+                            translateService.T("UNLINK DEVOPS WORK ITEM")
+                        )
+                        .then(function () {
+                            function onSuccess() {
+                                $ExceptionlessClient
+                                    .createFeatureUsage(vm._source + ".unlinkDevOpsWorkItem.success")
+                                    .setProperty("id", vm._stackId)
+                                    .submit();
+                            }
+
+                            function onFailure(response) {
+                                $ExceptionlessClient
+                                    .createFeatureUsage(vm._source + ".unlinkDevOpsWorkItem.error")
+                                    .setProperty("id", vm._stackId)
+                                    .setProperty("response", response)
+                                    .submit();
+                                notificationService.info(
+                                    translateService.T("An error occurred while unlinking DevOps Work Item.")
+                                );
+                            }
+
+                            return stackService.unlinkDevOpsWorkItem(vm._stackId).then(onSuccess, onFailure);
+                        })
+                        .catch(function (e) { });
+                }
+                // -
 
                 function remove() {
                     $ExceptionlessClient
@@ -782,6 +863,7 @@
                     vm._source = "app.stack.Stack";
                     vm._stackId = $stateParams.id;
                     vm.addReferenceLink = addReferenceLink;
+                    vm.linkDevOpsWorkItem = linkDevOpsWorkItem;
 
                     vm.chart = {
                         options: {
@@ -903,6 +985,7 @@
                     vm.project = {};
                     vm.remove = remove;
                     vm.removeReferenceLink = removeReferenceLink;
+                    vm.unlinkDevOpsWorkItem = unlinkDevOpsWorkItem;
                     vm.recentOccurrences = {
                         canRefresh: function canRefresh(events, data) {
                             if (data.type === "PersistentEvent") {
