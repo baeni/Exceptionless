@@ -7,6 +7,9 @@ namespace Exceptionless.Core.Repositories;
 public interface IStackRepository : IRepositoryOwnedByOrganizationAndProject<Stack>
 {
     Task<Stack?> GetStackBySignatureHashAsync(string projectId, string signatureHash);
+    // Abschlussprojekt
+    Task<Stack?> GetStackByDevOpsWorkItemIdAsync(string workItemId);
+    // -
     Task<FindResults<Stack>> GetIdsByQueryAsync(RepositoryQueryDescriptor<Stack> query, CommandOptionsDescriptor<Stack>? options = null);
     Task<FindResults<Stack>> GetExpiredSnoozedStatuses(DateTime utcNow, CommandOptionsDescriptor<Stack>? options = null);
     Task MarkAsRegressedAsync(string stackId);

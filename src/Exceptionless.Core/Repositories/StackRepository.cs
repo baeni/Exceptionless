@@ -105,6 +105,21 @@ ctx._source.total_occurrences += params.count;";
         return hit?.Document;
     }
 
+    // Abschlussprojekt
+    public async Task<Stack?> GetStackByDevOpsWorkItemIdAsync(string workItemId)
+    {
+        if (String.IsNullOrEmpty(workItemId))
+            return null;
+
+        var all = await GetAllAsync();
+
+        var filter = Query<Stack>.Term(s => s.DevOpsWorkItemId, workItemId);
+        var hit = await FindOneAsync(q => q.ElasticFilter(filter));
+
+        return hit?.Document;
+    }
+    // -
+
     public Task<FindResults<Stack>> GetIdsByQueryAsync(RepositoryQueryDescriptor<Stack> query, CommandOptionsDescriptor<Stack>? options = null)
     {
         return FindAsync(q => query.Configure().OnlyIds(), options);
