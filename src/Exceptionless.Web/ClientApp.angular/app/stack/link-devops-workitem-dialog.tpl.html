@@ -1,0 +1,41 @@
+<!-- Abschlussprojekt -->
+<form name="linkDevOpsWorkItemForm" role="form" class="form-validation" autocomplete="on">
+    <div class="modal-header dialog-header-confirm">
+        <button type="button" role="button" class="close" ng-click="vm.cancel()">&times;</button>
+        <h4 class="modal-title">
+            <i class="fa fa-link fa-fw"></i> {{::'Please enter the ID of a DevOps Work Item' | translate}}
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="devOpsWorkItemId">{{::'Work Item' | translate}}</label>
+            <input id="devOpsWorkItemId"
+                   name="devOpsWorkItemId"
+                   type="text"
+                   class="form-control input-lg"
+                   placeholder="{{::'Please enter a Work Item ID' | translate}}"
+                   ng-model="vm.data.devOpsWorkItemId"
+                   ng-required="true"
+                   autofocus />
+
+            <div class="error"
+                 ng-messages="linkDevOpsWorkItemForm.devOpsWorkItemId.$error"
+                 ng-if="linkDevOpsWorkItemForm.$submitted || linkDevOpsWorkItemForm.devOpsWorkItemId.$touched">
+                <small ng-message="required">{{::'Work Item ID is required.' | translate}}</small>
+                <small ng-message="devOpsWorkItemId">{{::'Work Item ID is required.' | translate}}</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" role="button" class="btn btn-default" ng-click="vm.cancel()">
+            {{::'Cancel' | translate}}
+        </button>
+        <input type="submit"
+               role="button"
+               class="btn btn-primary"
+               ng-click="vm.save(linkDevOpsWorkItemForm.$valid)"
+               value="{{::'Create linking' | translate}}" />
+    </div>
+</form>
