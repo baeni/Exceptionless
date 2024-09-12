@@ -213,6 +213,16 @@
                                     translate}}</a
                                 >
                             </li>
+                            <!-- Abschlussprojekt -->
+                            <li>
+                                <a
+                                    ng-click="vm.linkDevOpsWorkItem()"
+                                    title="{{::'Link a Work Item located in Azure DevOps.' | translate}}"
+                                    ><i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{::'Link DevOps Work Item' |
+                                    translate}}</a
+                                >
+                            </li>
+                            <!---->
                             <li class="divider"></li>
                             <li>
                                 <a ng-click="vm.remove()" title="{{::'Delete this stack' | translate}}"
@@ -315,9 +325,7 @@
                         <tr ng-if="vm.stack.tags.length > 0">
                             <th>{{::'Tags' | translate}}</th>
                             <td>
-                                <span class="label label-info" ng-repeat="tag in vm.stack.tags.slice(0,25) track by tag"
-                                    >{{::tag}}</span
-                                >
+                                <span class="label label-info" ng-repeat="tag in vm.stack.tags.slice(0,25) track by tag">{{::tag}}</span>
                             </td>
                         </tr>
                         <tr ng-if="vm.stack.references.length > 0">
@@ -328,20 +336,27 @@
                                 <ul ng-if="vm.stack.references.length > 1">
                                     <li ng-repeat="reference in vm.stack.references track by reference">
                                         <a ng-href="{{::reference}}" target="_blank">{{::reference}}</a>
-                                        <a class="delete-link" ng-click="vm.removeReferenceLink(reference)"
-                                            ><i class="fa fa-fw fa-times"></i
-                                        ></a>
+                                        <a class="delete-link" ng-click="vm.removeReferenceLink(reference)">
+                                            <i class="fa fa-fw fa-times"></i>
+                                        </a>
                                     </li>
                                 </ul>
 
                                 <div ng-if="vm.stack.references.length === 1">
-                                    <a ng-href="{{::vm.stack.references[0]}}" target="_blank"
-                                        >{{::vm.stack.references[0]}}</a
-                                    >
-                                    <a class="delete-link" ng-click="vm.removeReferenceLink(vm.stack.references[0])"
-                                        ><i class="fa fa-fw fa-times"></i
-                                    ></a>
+                                    <a ng-href="{{::vm.stack.references[0]}}" target="_blank">{{::vm.stack.references[0]}}</a>
+                                    <a class="delete-link" ng-click="vm.removeReferenceLink(vm.stack.references[0])">
+                                        <i class="fa fa-fw fa-times"></i>
+                                    </a>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr ng-if="vm.stack.dev_ops_work_item_id != null">
+                            <th>{{'DevOps Work Item' | translate}}</th>
+                            <td>
+                                <a ng-href="https://dev.azure.com/bsaalfeld/Exceptionless-Extension/_workitems/edit/{{vm.stack.dev_ops_work_item_id}}" target="_blank">{{vm.stack.dev_ops_work_item_state}} (Id: {{vm.stack.dev_ops_work_item_id}})</a>
+                                <a class="unlink-devops-work-item" ng-click="vm.unlinkDevOpsWorkItem()">
+                                    <i class="fa fa-fw fa-times"></i>
+                                </a>
                             </td>
                         </tr>
                     </tbody>
