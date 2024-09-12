@@ -10,6 +10,14 @@
                     .customPOST({ value: url }, undefined, undefined, {});
             }
 
+            // Abschlussprojekt
+            function linkDevOpsWorkItem(id, workItemId) {
+                return Restangular.one("stacks", id)
+                    .one("link-devops-workitem")
+                    .customPOST({ value: workItemId }, undefined, undefined, undefined, {}); 
+            }
+            //
+
             function changeStatus(id, status) {
                 return Restangular.one("stacks", id).post("change-status", null, { status: status });
             }
@@ -117,8 +125,17 @@
                     .customPOST({ value: url }, undefined, undefined, {});
             }
 
+            // Abschlussprojekt
+            function unlinkDevOpsWorkItem(id) {
+                return Restangular.one("stacks", id)
+                    .one("unlink-devops-work-item")
+                    .customPOST(undefined, undefined, {});
+            }
+            // -
+
             var service = {
                 addLink: addLink,
+                linkDevOpsWorkItem: linkDevOpsWorkItem,
                 changeStatus: changeStatus,
                 getAll: getAll,
                 getById: getById,
@@ -132,6 +149,7 @@
                 promote: promote,
                 remove: remove,
                 removeLink: removeLink,
+                unlinkDevOpsWorkItem: unlinkDevOpsWorkItem
             };
 
             return service;
