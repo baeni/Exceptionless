@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using AutoMapper;
 using Exceptionless.Core;
 using Exceptionless.Core.Authorization;
 using Exceptionless.Core.Billing;
@@ -275,6 +278,128 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
 
         return StatusCode(StatusCodes.Status204NoContent);
     }
+
+    // Abschlussprojekt
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id">The identifier of the stack.</param>
+    /// <param name="workItemId">The identifier of the work item in DevOps.</param>
+    /// <response code="400">Invalid work item identifier.</response>
+    /// <response code="404">The stack could not be found.</response>
+    [HttpPost("{id:objectid}/link-devops-workitem")]
+    [Consumes("application/json")]
+    [Authorize(Policy = AuthorizationRoles.UserPolicy)]
+    public async Task<IActionResult> LinkDevOpsWorkItemAsync(string id, ValueFromBody<string?> workItemId)
+    {
+        if (String.IsNullOrWhiteSpace(workItemId?.Value))
+            return BadRequest();
+
+        var stack = await GetModelAsync(id, false);
+        if (stack is null)
+            return NotFound();
+
+        stack.DevOpsWorkItemId = workItemId.Value.Trim();
+
+        var url = $"url";
+        var client = new HttpClient();
+
+        var pat = "pat";
+        var encodedPat = Convert.ToBase64String(Encoding.ASCII.GetBytes($":{pat}"));
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Basic", encodedPat);
+
+        try
+        {
+            var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
+            using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
+            {
+                var root = doc.RootElement;
+                var valueArray = root.GetProperty("value");
+
+                if (valueArray.GetArrayLength() > 0)
+                {
+                    var firstItem = valueArray[0];
+                    var state = firstItem.GetProperty("State").GetString();
+                    var stateCategory = firstItem.GetProperty("StateCategory").GetString();
+
+                    stack.DevOpsWorkItemState = state ?? "Unknown";
+                }
+                else
+                {
+                    stack.DevOpsWorkItemState = "State not found";
+                }
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            return BadRequest(ex.Message);
+            //return Results.StatusCode((int)(ex.StatusCode ?? HttpStatusCode.InternalServerError));
+        }
+
+        await _stackRepository.SaveAsync(stack);
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Remove reference link
+    /// </summary>
+    /// <param name="id">The identifier of the stack.</param>
+    /// <response code="204">The reference link was removed.</response>
+    /// <response code="400">Invalid reference link.</response>
+    /// <response code="404">The stack could not be found.</response>
+    [HttpPost("{id:objectid}/unlink-devops-work-item")]
+    [Consumes("application/json")]
+    [Authorize(Policy = AuthorizationRoles.UserPolicy)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> UnlinkDevOpsWorkItemAsync(string id)
+    {
+        var stack = await GetModelAsync(id, false);
+        if (stack is null)
+            return NotFound();
+
+        if (stack.DevOpsWorkItemId != null) {
+            stack.DevOpsWorkItemId = null;
+            stack.DevOpsWorkItemState = null;
+            await _stackRepository.SaveAsync(stack);
+        }
+
+        return StatusCode(StatusCodes.Status204NoContent);
+    }
+
+    /// <summary>
+    /// This controller action is called by azure devops to notify when changes to work items occur.
+    /// </summary>
+    [AllowAnonymous]
+    [HttpPost("update-devops-workitem")]
+    [Consumes("application/json")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<IActionResult> UpdateDevOpsWorkItemAsync(JObject data)
+    {
+        string? workItemId = data["resource"]?["workItemId"]?.ToString();
+
+        if (String.IsNullOrEmpty(workItemId))
+            return BadRequest("Request does not contain a valid workItemId.");
+
+        var stack = await _repository.GetStackByDevOpsWorkItemIdAsync(workItemId);
+        if (stack is null)
+            return Ok("No Stacks affected.");
+
+        string? newWorkItemState = data["resource"]?["fields"]?["System.State"]?["newValue"]?.ToString();
+        if (String.IsNullOrEmpty(newWorkItemState))
+            return Ok("No state change detected.");
+
+        stack.DevOpsWorkItemState = newWorkItemState;
+        await _stackRepository.SaveAsync(stack);
+
+        return Ok();
+    }
+    // -
 
     /// <summary>
     /// Mark future occurrences as critical
