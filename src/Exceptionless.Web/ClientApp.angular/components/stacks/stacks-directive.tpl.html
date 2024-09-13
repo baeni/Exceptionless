@@ -11,9 +11,8 @@
                 <th class="selection hidden-xs">
                     <label class="checks m-b-none">
                         <input
-                            type="checkbox"
-                            ng-click="vm.updateSelection()"
-                            ng-checked="vm.selectedIds.length > 0"
+                               ng-click="vm.updateSelection()"
+                               ng-checked="vm.selectedIds.length > 0"
                             ng-disabled="vm.stacks.length === 0"
                         /><i></i>
                     </label>
@@ -23,6 +22,7 @@
                 <th class="number">{{::'Events' | translate}}</th>
                 <th class="date hidden-xs">{{::'First' | translate}}</th>
                 <th class="date hidden-xs">{{::'Last' | translate}}</th>
+                <th class="number">{{::'State' | translate}}</th>
             </tr>
         </thead>
         <tbody>
@@ -52,12 +52,13 @@
                         <timeago date="stack.last_occurrence"></timeago>
                     </abbr>
                 </td>
+                <td ng-click="vm.open(stack.id, $event)" class="number">{{stack.dev_ops_work_item_state}}</td>
             </tr>
             <tr ng-if="vm.stacks.length === 0 || vm.loading">
                 <td class="hidden-xs">
                     <label class="checks m-b-none"><input type="checkbox" disabled /><i></i></label>
                 </td>
-                <td colspan="5" class="hidden-xs">
+                <td colspan="6" class="hidden-xs">
                     <strong ng-if="vm.loading">{{::'Loading...' | translate}}</strong>
                     <strong ng-if="!vm.loading"
                         >{{vm.hasFilter() ? 'No stacks were found with the current filter.': 'No stacks were found.' |
