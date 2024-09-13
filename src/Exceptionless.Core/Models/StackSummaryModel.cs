@@ -9,6 +9,7 @@ public record StackSummaryModel : SummaryData
     public StackStatus Status { get; init; }
     public DateTime FirstOccurrence { get; init; }
     public DateTime LastOccurrence { get; init; }
+    public string? DevOpsWorkItemState { get; init; }
     public long Total { get; init; }
 
     public double Users { get; init; }
