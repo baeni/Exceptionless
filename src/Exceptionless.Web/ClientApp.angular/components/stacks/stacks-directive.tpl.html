@@ -52,7 +52,7 @@
                         <timeago date="stack.last_occurrence"></timeago>
                     </abbr>
                 </td>
-                <td ng-click="vm.open(stack.id, $event)" class="number">{{stack.dev_ops_work_item_state}}</td>
+                <td ng-click="vm.open(stack.id, $event)" class="number">{{stack.dev_ops_work_item_state_name}}</td>
             </tr>
             <tr ng-if="vm.stacks.length === 0 || vm.loading">
                 <td class="hidden-xs">

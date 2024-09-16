@@ -166,7 +166,7 @@
                                     .setProperty("devOpsWorkItemId", devOpsWorkItemId)
                                     .submit();
                                 vm.stack.dev_ops_work_item_id = devOpsWorkItemId;
-                                vm.stack.dev_ops_work_item_state = "Fetching...";
+                                vm.stack.dev_ops_work_item_state_name = "Fetching...";
                                 console.log(".linkDevOpsWorkItem.success");
                             }
 
