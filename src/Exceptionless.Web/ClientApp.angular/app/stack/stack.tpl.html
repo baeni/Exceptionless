@@ -351,9 +351,9 @@
                             </td>
                         </tr>
                         <tr ng-if="vm.stack.dev_ops_work_item_id != null">
-                            <th>{{'DevOps Work Item' | translate}}</th>
+                            <th>{{'State' | translate}}</th>
                             <td>
-                                <a ng-href="https://dev.azure.com/bsaalfeld/Exceptionless-Extension/_workitems/edit/{{vm.stack.dev_ops_work_item_id}}" target="_blank">{{vm.stack.dev_ops_work_item_state}} (Id: {{vm.stack.dev_ops_work_item_id}})</a>
+                                <a ng-href="https://dev.azure.com/bsaalfeld/Exceptionless-Extension/_workitems/edit/{{vm.stack.dev_ops_work_item_id}}" target="_blank">{{vm.stack.dev_ops_work_item_state_name}} (Id: {{vm.stack.dev_ops_work_item_id}})</a>
                                 <a class="unlink-devops-work-item" ng-click="vm.unlinkDevOpsWorkItem()">
                                     <i class="fa fa-fw fa-times"></i>
                                 </a>
