@@ -324,21 +324,16 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
                 if (valueArray.GetArrayLength() > 0)
                 {
                     var firstItem = valueArray[0];
-                    var state = firstItem.GetProperty("State").GetString();
+                    var stateName = firstItem.GetProperty("State").GetString();
                     var stateCategory = firstItem.GetProperty("StateCategory").GetString();
 
-                    stack.DevOpsWorkItemState = state ?? "Unknown";
-                }
-                else
-                {
-                    stack.DevOpsWorkItemState = "State not found";
+                    stack.DevOpsWorkItemStateName = stateName;
                 }
             }
         }
         catch (HttpRequestException ex)
         {
             return BadRequest(ex.Message);
-            //return Results.StatusCode((int)(ex.StatusCode ?? HttpStatusCode.InternalServerError));
         }
 
         await _stackRepository.SaveAsync(stack);
@@ -365,7 +360,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
 
         if (stack.DevOpsWorkItemId != null) {
             stack.DevOpsWorkItemId = null;
-            stack.DevOpsWorkItemState = null;
+            stack.DevOpsWorkItemStateName = null;
             await _stackRepository.SaveAsync(stack);
         }
 
@@ -383,18 +378,17 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     {
         string? workItemId = data["resource"]?["workItemId"]?.ToString();
 
-        if (String.IsNullOrEmpty(workItemId))
+        if (string.IsNullOrEmpty(workItemId))
             return BadRequest("Request does not contain a valid workItemId.");
 
         var stack = await _repository.GetStackByDevOpsWorkItemIdAsync(workItemId);
         if (stack is null)
             return Ok("No Stacks affected.");
 
-        string? newWorkItemState = data["resource"]?["fields"]?["System.State"]?["newValue"]?.ToString();
-        if (String.IsNullOrEmpty(newWorkItemState))
-            return Ok("No state change detected.");
+        string? newWorkItemStateName = data["resource"]?["fields"]?["System.State"]?["newValue"]?.ToString();
+        if (!string.IsNullOrEmpty(newWorkItemStateName))
+            stack.DevOpsWorkItemStateName = newWorkItemStateName;
 
-        stack.DevOpsWorkItemState = newWorkItemState;
         await _stackRepository.SaveAsync(stack);
 
         return Ok();
