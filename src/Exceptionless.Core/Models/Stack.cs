@@ -102,9 +102,9 @@ public class Stack : IOwnedByOrganizationAndProjectWithIdentity, IHaveDates, ISu
     public string? DevOpsWorkItemId { get; set; }
 
     /// <summary>
-    /// The state of the linked DevOps work item.
+    /// The state name of the linked DevOps work item.
     /// </summary>
-    public string? DevOpsWorkItemState { get; set; }
+    public string? DevOpsWorkItemStateName { get; set; }
     // -
 
     /// <summary>
