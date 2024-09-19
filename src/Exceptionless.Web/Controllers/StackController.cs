@@ -1,7 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
-using AutoMapper;
+﻿using AutoMapper;
 using Exceptionless.Core;
 using Exceptionless.Core.Authorization;
 using Exceptionless.Core.Billing;
@@ -14,6 +11,7 @@ using Exceptionless.Core.Queues.Models;
 using Exceptionless.Core.Repositories;
 using Exceptionless.Core.Repositories.Configuration;
 using Exceptionless.Core.Repositories.Queries;
+using Exceptionless.Core.Services;
 using Exceptionless.Core.Utility;
 using Exceptionless.DateTimeExtensions;
 using Exceptionless.Web.Models;
@@ -38,6 +36,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     private readonly IStackRepository _stackRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IWebHookRepository _webHookRepository;
+    private readonly IDevOpsWorkItemService _devOpsWorkItemService;
     private readonly SemanticVersionParser _semanticVersionParser;
     private readonly WebHookDataPluginManager _webHookDataPluginManager;
     private readonly ICacheClient _cache;
@@ -52,6 +51,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
         IProjectRepository projectRepository,
         IEventRepository eventRepository,
         IWebHookRepository webHookRepository,
+        IDevOpsWorkItemService devOpsWorkItemService,
         WebHookDataPluginManager webHookDataPluginManager,
         IQueue<WebHookNotification> webHookNotificationQueue,
         ICacheClient cacheClient,
@@ -70,6 +70,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
         _projectRepository = projectRepository;
         _eventRepository = eventRepository;
         _webHookRepository = webHookRepository;
+        _devOpsWorkItemService = devOpsWorkItemService;
         _webHookDataPluginManager = webHookDataPluginManager;
         _webHookNotificationQueue = webHookNotificationQueue;
         _cache = cacheClient;
@@ -292,53 +293,10 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     [Authorize(Policy = AuthorizationRoles.UserPolicy)]
     public async Task<IActionResult> LinkDevOpsWorkItemAsync(string id, ValueFromBody<string?> workItemId)
     {
-        if (String.IsNullOrWhiteSpace(workItemId?.Value))
+        if (string.IsNullOrWhiteSpace(workItemId?.Value))
             return BadRequest();
 
-        var stack = await GetModelAsync(id, false);
-        if (stack is null)
-            return NotFound();
-
-        stack.DevOpsWorkItemId = workItemId.Value.Trim();
-
-        var url = $"url";
-        var client = new HttpClient();
-
-        var pat = "pat";
-        var encodedPat = Convert.ToBase64String(Encoding.ASCII.GetBytes($":{pat}"));
-        var request = new HttpRequestMessage(HttpMethod.Get, url);
-        request.Headers.Authorization = new AuthenticationHeaderValue("Basic", encodedPat);
-
-        try
-        {
-            var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-
-            using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
-            {
-                var root = doc.RootElement;
-                var valueArray = root.GetProperty("value");
-
-                if (valueArray.GetArrayLength() > 0)
-                {
-                    var firstItem = valueArray[0];
-                    var stateName = firstItem.GetProperty("State").GetString();
-                    var stateCategory = firstItem.GetProperty("StateCategory").GetString();
-
-                    stack.DevOpsWorkItemStateName = stateName;
-                }
-            }
-        }
-        catch (HttpRequestException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-
-        await _stackRepository.SaveAsync(stack);
-
-        return Ok();
+        return await _devOpsWorkItemService.LinkWorkItemToStackAsync(stackId: id, workItemId.Value.Trim());
     }
 
     /// <summary>
@@ -352,19 +310,9 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     [Consumes("application/json")]
     [Authorize(Policy = AuthorizationRoles.UserPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> UnlinkDevOpsWorkItemAsync(string id)
+    public Task<IActionResult> UnlinkDevOpsWorkItemAsync(string id)
     {
-        var stack = await GetModelAsync(id, false);
-        if (stack is null)
-            return NotFound();
-
-        if (stack.DevOpsWorkItemId != null) {
-            stack.DevOpsWorkItemId = null;
-            stack.DevOpsWorkItemStateName = null;
-            await _stackRepository.SaveAsync(stack);
-        }
-
-        return StatusCode(StatusCodes.Status204NoContent);
+        return _devOpsWorkItemService.UnlinkWorkItemFromStackAsync(stackId: id);
     }
 
     /// <summary>
@@ -377,21 +325,12 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     public async Task<IActionResult> UpdateDevOpsWorkItemAsync(JObject data)
     {
         string? workItemId = data["resource"]?["workItemId"]?.ToString();
-
-        if (string.IsNullOrEmpty(workItemId))
-            return BadRequest("Request does not contain a valid workItemId.");
-
-        var stack = await _repository.GetStackByDevOpsWorkItemIdAsync(workItemId);
-        if (stack is null)
-            return Ok("No Stacks affected.");
-
         string? newWorkItemStateName = data["resource"]?["fields"]?["System.State"]?["newValue"]?.ToString();
-        if (!string.IsNullOrEmpty(newWorkItemStateName))
-            stack.DevOpsWorkItemStateName = newWorkItemStateName;
 
-        await _stackRepository.SaveAsync(stack);
+        if (string.IsNullOrEmpty(workItemId) || string.IsNullOrEmpty(newWorkItemStateName))
+            return BadRequest("Invalid data.");
 
-        return Ok();
+        return await _devOpsWorkItemService.UpdateWorkItemStateAsync(workItemId, newWorkItemStateName);
     }
     // -
 
