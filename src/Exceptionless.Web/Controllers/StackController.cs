@@ -282,15 +282,19 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
 
     // Abschlussprojekt
     /// <summary>
-    /// 
+    /// Add DevOps Work Item linking
     /// </summary>
     /// <param name="id">The identifier of the stack.</param>
     /// <param name="workItemId">The identifier of the work item in DevOps.</param>
-    /// <response code="400">Invalid work item identifier.</response>
+    /// <response code="200">The DevOps Work Item linking was created.</response>
     /// <response code="404">The stack could not be found.</response>
+    /// <response code="400">The state was either not procided, or provided in an invalid format.</response>
     [HttpPost("{id:objectid}/link-devops-workitem")]
     [Consumes("application/json")]
     [Authorize(Policy = AuthorizationRoles.UserPolicy)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> LinkDevOpsWorkItemAsync(string id, ValueFromBody<string?> workItemId)
     {
         if (string.IsNullOrWhiteSpace(workItemId?.Value))
@@ -300,16 +304,16 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     }
 
     /// <summary>
-    /// Remove reference link
+    /// Remove DevOps Work Item linking
     /// </summary>
     /// <param name="id">The identifier of the stack.</param>
-    /// <response code="204">The reference link was removed.</response>
-    /// <response code="400">Invalid reference link.</response>
+    /// <response code="204">The DevOps Work Item linking was removed.</response>
     /// <response code="404">The stack could not be found.</response>
     [HttpPost("{id:objectid}/unlink-devops-work-item")]
     [Consumes("application/json")]
     [Authorize(Policy = AuthorizationRoles.UserPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public Task<IActionResult> UnlinkDevOpsWorkItemAsync(string id)
     {
         return _devOpsWorkItemService.UnlinkWorkItemFromStackAsync(stackId: id);
