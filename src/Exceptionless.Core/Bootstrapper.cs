@@ -136,11 +136,7 @@ public class Bootstrapper
         services.AddSingleton<IWebHookRepository, WebHookRepository>();
         services.AddSingleton<ITokenRepository, TokenRepository>();
 
-        // Abschlussprojekt
-        services.AddHttpClient("devopsanalytics", client =>
-        {
-            client.BaseAddress = new Uri("https://analytics.dev.azure.com/bsaalfeld/Exceptionless-Extension/_odata/v2.0/");
-        });
+        services.AddHttpClient("devopsanalytics", client => client.BaseAddress = new Uri("https://analytics.dev.azure.com/bsaalfeld/Exceptionless-Extension/_odata/v2.0/"));
         services.AddSingleton<IDevOpsWorkItemService>(sp =>
         {
             var stackRepository = sp.GetRequiredService<IStackRepository>();
@@ -150,7 +146,6 @@ public class Bootstrapper
 
             return new DevOpsWorkItemService(stackRepository, httpClientFactory, pat, logger);
         });
-        // -
         services.AddSingleton<IGeocodeService, NullGeocodeService>();
         services.AddSingleton<IGeoIpService, NullGeoIpService>();
 
