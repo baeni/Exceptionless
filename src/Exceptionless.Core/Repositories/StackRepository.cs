@@ -108,10 +108,8 @@ ctx._source.total_occurrences += params.count;";
     // Abschlussprojekt
     public async Task<Stack?> GetStackByDevOpsWorkItemIdAsync(string workItemId)
     {
-        if (String.IsNullOrEmpty(workItemId))
+        if (string.IsNullOrEmpty(workItemId))
             return null;
-
-        var all = await GetAllAsync();
 
         var filter = Query<Stack>.Term(s => s.DevOpsWorkItemId, workItemId);
         var hit = await FindOneAsync(q => q.ElasticFilter(filter));
