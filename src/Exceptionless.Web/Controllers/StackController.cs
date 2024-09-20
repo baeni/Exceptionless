@@ -289,7 +289,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     /// <response code="200">The DevOps Work Item linking was created.</response>
     /// <response code="404">The stack could not be found.</response>
     /// <response code="400">The state was either not procided, or provided in an invalid format.</response>
-    [HttpPost("{id:objectid}/link-devops-workitem")]
+    [HttpPost("{id:objectid}/link-devops-work-item")]
     [Consumes("application/json")]
     [Authorize(Policy = AuthorizationRoles.UserPolicy)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -323,7 +323,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     /// This controller action is called by azure devops to notify when changes to work items occur.
     /// </summary>
     [AllowAnonymous]
-    [HttpPost("update-devops-workitem")]
+    [HttpPost("update-devops-work-item")]
     [Consumes("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> UpdateDevOpsWorkItemAsync(JObject data)
