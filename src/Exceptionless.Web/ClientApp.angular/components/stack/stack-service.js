@@ -13,7 +13,7 @@
             // Abschlussprojekt
             function linkDevOpsWorkItem(id, workItemId) {
                 return Restangular.one("stacks", id)
-                    .one("link-devops-workitem")
+                    .one("link-devops-work-item")
                     .customPOST({ value: workItemId }, undefined, undefined, undefined, {}); 
             }
             //
