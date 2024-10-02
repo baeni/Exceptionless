@@ -137,6 +137,7 @@ public class Bootstrapper
         services.AddSingleton<ITokenRepository, TokenRepository>();
 
         services.AddHttpClient("devopsanalytics", client => client.BaseAddress = new Uri("https://analytics.dev.azure.com/bsaalfeld/Exceptionless-Extension/_odata/v2.0/"));
+        services.AddHttpClient("devops", client => client.BaseAddress = new Uri("https://dev.azure.com/bsaalfeld/Exceptionless-Extension/_apis/wit/"));
         services.AddSingleton<IDevOpsWorkItemService>(sp =>
         {
             var stackRepository = sp.GetRequiredService<IStackRepository>();
