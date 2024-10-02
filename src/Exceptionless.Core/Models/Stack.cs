@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using Exceptionless.Core.Services;
 using Foundatio.Repositories.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -31,9 +32,21 @@ public class Stack : IOwnedByOrganizationAndProjectWithIdentity, IHaveDates, ISu
     public string Type { get; set; } = null!;
 
     /// <summary>
-    /// The stack status (ie. open, fixed, regressed,
+    /// The stack status (ie. open, fixed, regressed, snoozed, ignored, discarded)
     /// </summary>
     public StackStatus Status { get; set; } = StackStatus.Open;
+
+    //Abschlussprojekt
+    /// <summary>
+    /// The id of the linked DevOps work item.
+    /// </summary>
+    public string? DevOpsWorkItemId { get; set; }
+
+    /// <summary>
+    /// The state of the linked DevOps work item.
+    /// </summary>
+    public DevOpsWorkItemState? DevOpsWorkItemState { get; set; }
+    // -
 
     /// <summary>
     /// The date that the stack should be snoozed until.
@@ -94,18 +107,6 @@ public class Stack : IOwnedByOrganizationAndProjectWithIdentity, IHaveDates, ISu
     /// A list of references.
     /// </summary>
     public ICollection<string> References { get; set; } = new Collection<string>();
-
-    //Abschlussprojekt
-    /// <summary>
-    /// The id of the linked DevOps work item.
-    /// </summary>
-    public string? DevOpsWorkItemId { get; set; }
-
-    /// <summary>
-    /// The state name of the linked DevOps work item.
-    /// </summary>
-    public string? DevOpsWorkItemStateName { get; set; }
-    // -
 
     /// <summary>
     /// A list of tags used to categorize this stack.
