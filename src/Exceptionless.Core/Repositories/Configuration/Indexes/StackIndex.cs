@@ -58,7 +58,6 @@ public sealed class StackIndex : VersionedIndex<Stack>
                     .FieldAlias(a => a.Name(Alias.References).Path(f => f.References))
                 // Abschlussprojekt
                 .Keyword(f => f.Name(s => s.DevOpsWorkItemId).IgnoreAbove(1024))
-                .Keyword(f => f.Name(s => s.DevOpsWorkItemStateName).IgnoreAbove(1024))
                 // -
                 .Date(f => f.Name(s => s.DateFixed))
                     .FieldAlias(a => a.Name(Alias.DateFixed).Path(f => f.DateFixed))
