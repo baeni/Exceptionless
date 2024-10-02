@@ -157,10 +157,13 @@
             <div class="panel-heading">
                 {{::'Stack' | translate}}
                 <span class="labels">
-                    <span
-                        class="label label-success"
-                        ng-if="vm.stack.fixed_in_version && vm.stack.status !== 'regressed'"
-                    >
+                    <!-- Abschlussprojekt -->
+                    <span class="label label-info" ng-if="vm.stack.dev_ops_work_item_id != null">
+                        <a class="hidden-xs" ng-href="https://dev.azure.com/bsaalfeld/Exceptionless-Extension/_workitems/edit/{{vm.stack.dev_ops_work_item_id}}" target="_blank">Linked to DevOps Work Item ({{vm.stack.dev_ops_work_item_state}})</a>
+                    </span>
+                    <!---->
+                    <span class="label label-success"
+                          ng-if="vm.stack.fixed_in_version && vm.stack.status !== 'regressed'">
                         <span class="hidden-xs">{{'Fixed_With_Version' | translate : vm.stack}}</span>
                     </span>
                     <span class="label label-info" ng-if="vm.stack.status === 'snoozed'">
@@ -216,9 +219,17 @@
                             <!-- Abschlussprojekt -->
                             <li>
                                 <a
+                                    ng-if="!vm.stack.dev_ops_work_item_id"
                                     ng-click="vm.linkDevOpsWorkItem()"
                                     title="{{::'Link a Work Item located in Azure DevOps.' | translate}}"
                                     ><i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{::'Link DevOps Work Item' |
+                                    translate}}</a
+                                >
+                                <a
+                                    ng-if="vm.stack.dev_ops_work_item_id"
+                                    ng-click="vm.unlinkDevOpsWorkItem()"
+                                    title="{{::'Link a Work Item located in Azure DevOps.' | translate}}"
+                                    ><i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{::'Unlink DevOps Work Item' |
                                     translate}}</a
                                 >
                             </li>
@@ -348,15 +359,6 @@
                                         <i class="fa fa-fw fa-times"></i>
                                     </a>
                                 </div>
-                            </td>
-                        </tr>
-                        <tr ng-if="vm.stack.dev_ops_work_item_id != null">
-                            <th>{{'State' | translate}}</th>
-                            <td>
-                                <a ng-href="https://dev.azure.com/bsaalfeld/Exceptionless-Extension/_workitems/edit/{{vm.stack.dev_ops_work_item_id}}" target="_blank">{{vm.stack.dev_ops_work_item_state_name}} (Id: {{vm.stack.dev_ops_work_item_id}})</a>
-                                <a class="unlink-devops-work-item" ng-click="vm.unlinkDevOpsWorkItem()">
-                                    <i class="fa fa-fw fa-times"></i>
-                                </a>
                             </td>
                         </tr>
                     </tbody>
