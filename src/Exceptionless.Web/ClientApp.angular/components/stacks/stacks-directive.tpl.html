@@ -22,7 +22,7 @@
                 <th class="number">{{::'Events' | translate}}</th>
                 <th class="date hidden-xs">{{::'First' | translate}}</th>
                 <th class="date hidden-xs">{{::'Last' | translate}}</th>
-                <th class="number">{{::'State' | translate}}</th>
+                <th class="number">{{::'Work Item State' | translate}}</th>
             </tr>
         </thead>
         <tbody>
@@ -52,7 +52,7 @@
                         <timeago date="stack.last_occurrence"></timeago>
                     </abbr>
                 </td>
-                <td ng-click="vm.open(stack.id, $event)" class="number">{{stack.dev_ops_work_item_state_name}}</td>
+                <td ng-click="vm.open(stack.id, $event)" class="number">{{stack.dev_ops_work_item_state}}</td>
             </tr>
             <tr ng-if="vm.stacks.length === 0 || vm.loading">
                 <td class="hidden-xs">
