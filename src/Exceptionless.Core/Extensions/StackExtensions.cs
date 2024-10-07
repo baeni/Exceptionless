@@ -13,6 +13,14 @@ public static class StackExtensions
         stack.SnoozeUntilUtc = null;
     }
 
+    public static void MarkDoing(this Stack stack)
+    {
+        stack.Status = StackStatus.Doing;
+        stack.DateFixed = null;
+        stack.FixedInVersion = null;
+        stack.SnoozeUntilUtc = null;
+    }
+
     public static void MarkOpen(this Stack stack)
     {
         stack.Status = StackStatus.Open;

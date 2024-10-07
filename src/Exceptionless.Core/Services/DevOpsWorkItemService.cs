@@ -84,10 +84,14 @@ public class DevOpsWorkItemService : IDevOpsWorkItemService
             case StackStatus.Open:
                 newWorkItemState = DevOpsWorkItemState.ToDo;
                 break;
+            case StackStatus.Doing:
+                newWorkItemState = DevOpsWorkItemState.Doing;
+                break;
             case StackStatus.Snoozed:
                 newWorkItemState = DevOpsWorkItemState.ToDo;
                 break;
             case StackStatus.Fixed:
+            case StackStatus.Regressed:
             case StackStatus.Ignored:
             case StackStatus.Discarded:
                 newWorkItemState = DevOpsWorkItemState.Done;
@@ -104,6 +108,7 @@ public class DevOpsWorkItemService : IDevOpsWorkItemService
         request.Headers.Authorization = new AuthenticationHeaderValue("Basic", encodedPat);
         request.Content = new StringContent(
             JsonSerializer.Serialize(
+
                 new[]
                 {
                     new { op = "add", path = "/fields/System.State", value = newWorkItemState.ToDevOpsString() }
@@ -128,7 +133,7 @@ public class DevOpsWorkItemService : IDevOpsWorkItemService
                 stack.MarkOpen();
                 break;
             case DevOpsWorkItemState.Doing:
-                stack.MarkOpen();
+                stack.MarkDoing();
                 break;
             case DevOpsWorkItemState.Done:
                 stack.MarkFixed(null, timeProvider);

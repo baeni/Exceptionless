@@ -625,6 +625,38 @@
                     return stackService.changeStatus(vm._stackId, "open").then(onSuccess, onFailure);
                 }
 
+                // Abschlussprojekt
+                function updateDoing() {
+                    function onSuccess() {
+                        $ExceptionlessClient
+                            .createFeatureUsage(vm._source + ".updateDoing.success")
+                            .setProperty("id", vm._stackId)
+                            .submit();
+                    }
+
+                    function onFailure(response) {
+                        $ExceptionlessClient
+                            .createFeatureUsage(vm._source + ".updateDoing.error")
+                            .setProperty("id", vm._stackId)
+                            .setProperty("response", response)
+                            .submit();
+                        notificationService.error(
+                            translateService.T("An error occurred while marking this stack as doing.")
+                        );
+                    }
+
+                    $ExceptionlessClient
+                        .createFeatureUsage(vm._source + ".updateDoing")
+                        .setProperty("id", vm._stackId)
+                        .submit();
+                    if (vm.stack.status === "doing") {
+                        return;
+                    }
+
+                    return stackService.changeStatus(vm._stackId, "doing").then(onSuccess, onFailure);
+                }
+                // -
+
                 function updateCritical() {
                     function onSuccess() {
                         $ExceptionlessClient
@@ -1054,6 +1086,7 @@
                     vm._users = 0;
                     vm._total_users = 0;
                     vm.updateOpen = updateOpen;
+                    vm.updateDoing = updateDoing;
                     vm.updateCritical = updateCritical;
                     vm.updateDiscard = updateDiscard;
                     vm.updateFixed = updateFixed;

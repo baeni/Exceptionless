@@ -263,20 +263,19 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right" role="menu">
                             <li ng-class="{'active': vm.stack.status == 'open'}">
-                                <a ng-click="vm.updateOpen()" title="{{::'Mark this stack as open' | translate}}"
-                                    >{{::'open' | translate}}</a
-                                >
+                                <a ng-click="vm.updateOpen()" title="{{::'Mark this stack as open' | translate}}">{{::'open' | translate}}</a>
                             </li>
+                            <!-- Abschlussprojekt -->
+                            <li ng-class="{'active': vm.stack.status == 'doing'}">
+                                <a ng-click="vm.updateDoing()" title="{{::'Mark this stack as doing' | translate}}">{{::'doing' | translate}}</a>
+                            </li>
+                            <!---->
                             <li ng-class="{'active': vm.stack.status == 'fixed'}">
-                                <a ng-click="vm.updateFixed()" title="{{::'Mark this stack as fixed' | translate}}"
-                                    >{{'fixed' | translate}}</a
-                                >
+                                <a ng-click="vm.updateFixed()" title="{{::'Mark this stack as fixed' | translate}}">{{'fixed' | translate}}</a>
                             </li>
                             <li class="dropdown-submenu" ng-class="{'active': vm.stack.status == 'snoozed'}">
-                                <a
-                                    ng-click="vm.updateSnooze()"
-                                    title="{{::'Hide this stack from reports and mutes occurrence notifications' | translate}}"
-                                >
+                                <a ng-click="vm.updateSnooze()"
+                                   title="{{::'Hide this stack from reports and mutes occurrence notifications' | translate}}">
                                     {{::'snoozed' | translate}} <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
@@ -287,18 +286,12 @@
                                 </ul>
                             </li>
                             <li ng-class="{'active': vm.stack.status == 'ignored'}">
-                                <a
-                                    ng-click="vm.updateIgnore()"
-                                    title="{{::'Stop sending occurrence notifications for this stack' | translate}}"
-                                    >{{::'ignored' | translate}}</a
-                                >
+                                <a ng-click="vm.updateIgnore()"
+                                   title="{{::'Stop sending occurrence notifications for this stack' | translate}}">{{::'ignored' | translate}}</a>
                             </li>
                             <li ng-class="{'active': vm.stack.status == 'discarded'}">
-                                <a
-                                    ng-click="vm.updateDiscard()"
-                                    title="{{::'All future occurrences will be discarded and will not count against your event limit.' | translate}}"
-                                    >{{::'discarded' | translate}}</a
-                                >
+                                <a ng-click="vm.updateDiscard()"
+                                   title="{{::'All future occurrences will be discarded and will not count against your event limit.' | translate}}">{{::'discarded' | translate}}</a>
                             </li>
                         </ul>
                     </div>
