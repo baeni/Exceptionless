@@ -1,4 +1,4 @@
-﻿using Exceptionless.Core.Services;
+﻿using Exceptionless.Core.Models;
 
 namespace Exceptionless.Core.Extensions;
 
