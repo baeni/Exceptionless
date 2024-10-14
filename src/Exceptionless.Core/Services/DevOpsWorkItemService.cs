@@ -192,10 +192,3 @@ public interface IDevOpsWorkItemService
 
     Task<IActionResult> UpdateLocalWorkItemState(string workItemId, DevOpsWorkItemState newWorkItemState, TimeProvider timeProvider);
 }
-
-public enum DevOpsWorkItemState
-{
-    ToDo,
-    Doing,
-    Done
-}

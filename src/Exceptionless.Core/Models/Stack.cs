@@ -147,3 +147,11 @@ public enum StackStatus
     [EnumMember(Value = "ignored")] Ignored,
     [EnumMember(Value = "discarded")] Discarded
 }
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum DevOpsWorkItemState
+{
+    [EnumMember(Value = "to do")] ToDo,
+    [EnumMember(Value = "doing")] Doing,
+    [EnumMember(Value = "done")] Done
+}
