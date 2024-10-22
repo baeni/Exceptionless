@@ -158,9 +158,9 @@
                 {{::'Stack' | translate}}
                 <span class="labels">
                     <!-- Abschlussprojekt -->
-                    <span class="label label-info" ng-if="vm.stack.dev_ops_work_item_id != null">
-                        <a class="hidden-xs" ng-href="https://dev.azure.com/bsaalfeld/Exceptionless-Extension/_workitems/edit/{{vm.stack.dev_ops_work_item_id}}" target="_blank">{{::'Linked to DevOps Work Item' | translate}} ({{vm.stack.dev_ops_work_item_state | translate}})</a>
-                    </span>
+                    <a class="label label-info" ng-if="vm.stack.dev_ops_work_item_id != null" ng-href="https://dev.azure.com/bsaalfeld/Exceptionless-Extension/_workitems/edit/{{vm.stack.dev_ops_work_item_id}}" target="_blank">
+                        {{::'Linked to DevOps Work Item' | translate}} ({{vm.stack.dev_ops_work_item_state | translate}})
+                    </a>
                     <!---->
                     <span class="label label-success"
                           ng-if="vm.stack.fixed_in_version && vm.stack.status !== 'regressed'">
