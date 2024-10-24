@@ -41,7 +41,7 @@ public class DevOpsWorkItemService : IDevOpsWorkItemService
                 stack.MarkOpen();
                 break;
             case DevOpsWorkItemState.Doing:
-                stack.MarkOpen();
+                stack.MarkDoing();
                 break;
             case DevOpsWorkItemState.Done:
                 stack.MarkFixed(null, timeProvider);
