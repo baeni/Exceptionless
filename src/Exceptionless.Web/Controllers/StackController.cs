@@ -300,7 +300,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     [HttpPost("{id:objectid}/link-devops-work-item")]
     [Consumes("application/json")]
     [Authorize(Policy = AuthorizationRoles.UserPolicy)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> LinkDevOpsWorkItemAsync(string id, ValueFromBody<string?> workItemId)
@@ -325,6 +325,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     [Authorize(Policy = AuthorizationRoles.UserPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UnlinkDevOpsWorkItemAsync(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -339,6 +340,8 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     [AllowAnonymous]
     [HttpPost("work-item-state-changed")]
     [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> WorkItemStateChangedAsync(JObject data)
     {
