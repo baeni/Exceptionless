@@ -105,19 +105,6 @@ ctx._source.total_occurrences += params.count;";
         return hit?.Document;
     }
 
-    // Abschlussprojekt
-    public async Task<Stack?> GetStackByDevOpsWorkItemIdAsync(string workItemId)
-    {
-        if (string.IsNullOrEmpty(workItemId))
-            return null;
-
-        var filter = Query<Stack>.Term(s => s.DevOpsWorkItemId, workItemId);
-        var hit = await FindOneAsync(q => q.ElasticFilter(filter));
-
-        return hit?.Document;
-    }
-    // -
-
     public Task<FindResults<Stack>> GetIdsByQueryAsync(RepositoryQueryDescriptor<Stack> query, CommandOptionsDescriptor<Stack>? options = null)
     {
         return FindAsync(q => query.Configure().OnlyIds(), options);
