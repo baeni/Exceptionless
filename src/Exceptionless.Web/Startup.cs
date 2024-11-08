@@ -171,6 +171,8 @@ public class Startup
                 Period = TimeSpan.FromMinutes(15)
             };
         });
+
+        Exceptionless.Extensions.DevOps.Bootstrapper.RegisterServices(services, appOptions, Log.Logger.ToLoggerFactory());
     }
 
     public void Configure(IApplicationBuilder app)
