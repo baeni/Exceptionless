@@ -29,6 +29,11 @@ Serilog:
   - WithMachineName
   - WithThreadId
 
+DevOps:
+  Pat: "<devops-pat>"
+  Organization: "<devops-organization>"
+  Project: "<devops-project>"
+
 Apm:
   ServiceName: exceptionless
   EnableLogs: true
