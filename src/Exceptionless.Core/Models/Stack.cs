@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.Serialization;
-using Exceptionless.Core.Services;
 using Foundatio.Repositories.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -35,18 +34,6 @@ public class Stack : IOwnedByOrganizationAndProjectWithIdentity, IHaveDates, ISu
     /// The stack status (ie. open, fixed, regressed, snoozed, ignored, discarded)
     /// </summary>
     public StackStatus Status { get; set; } = StackStatus.Open;
-
-    //Abschlussprojekt
-    /// <summary>
-    /// The id of the linked DevOps work item.
-    /// </summary>
-    public string? DevOpsWorkItemId { get; set; }
-
-    /// <summary>
-    /// The state of the linked DevOps work item.
-    /// </summary>
-    public DevOpsWorkItemState? DevOpsWorkItemState { get; set; }
-    // -
 
     /// <summary>
     /// The date that the stack should be snoozed until.
@@ -140,18 +127,10 @@ public class Stack : IOwnedByOrganizationAndProjectWithIdentity, IHaveDates, ISu
 public enum StackStatus
 {
     [EnumMember(Value = "open")] Open,
-    [EnumMember(Value = "doing")] Doing,
+    [EnumMember(Value = "in progress")] InProgress,
     [EnumMember(Value = "fixed")] Fixed,
     [EnumMember(Value = "regressed")] Regressed,
     [EnumMember(Value = "snoozed")] Snoozed,
     [EnumMember(Value = "ignored")] Ignored,
     [EnumMember(Value = "discarded")] Discarded
-}
-
-[JsonConverter(typeof(StringEnumConverter))]
-public enum DevOpsWorkItemState
-{
-    [EnumMember(Value = "to do")] ToDo,
-    [EnumMember(Value = "doing")] Doing,
-    [EnumMember(Value = "done")] Done
 }
