@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exceptionless.Tests", "test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exceptionless.Job", "src\Exceptionless.Job\Exceptionless.Job.csproj", "{788BA00C-FFBE-42A9-92A3-89E24FC137B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exceptionless.Extensions.DevOps", "src\Exceptionless.Extensions.DevOps\Exceptionless.Extensions.DevOps.csproj", "{CB7E0E95-2F41-48EB-8177-7F8F3F0EB72D}"
+EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker\docker-compose.dcproj", "{9F933018-9E8B-4649-8C9A-D217B5E1C184}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "http", "http", "{97ED03A0-8C49-4B15-8D93-C56AF4DDC30F}"
@@ -43,8 +45,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "http", "http", "{97ED03A0-8
 		tests\http\users.http = tests\http\users.http
 		tests\http\webhooks.http = tests\http\webhooks.http
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exceptionless.Extensions.DevOps", "Exceptionless.Extensions.DevOps\Exceptionless.Extensions.DevOps.csproj", "{CB7E0E95-2F41-48EB-8177-7F8F3F0EB72D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
