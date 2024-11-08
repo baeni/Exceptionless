@@ -1405,7 +1405,6 @@ public class EventController : RepositoryApiController<IEventRepository, Persist
                 Data = data.Data,
                 Title = stack.Title,
                 Status = stack.Status,
-                DevOpsWorkItemState = stack.DevOpsWorkItemState,
                 FirstOccurrence = term.Aggregations.Min<DateTime>("min_date").Value,
                 LastOccurrence = term.Aggregations.Max<DateTime>("max_date").Value,
                 Total = (long)(term.Aggregations.Sum("sum_count").Value ?? term.Total.GetValueOrDefault()),
