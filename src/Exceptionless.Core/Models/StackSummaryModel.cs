@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Exceptionless.Core.Services;
 
 namespace Exceptionless.Core.Models;
 
@@ -8,7 +7,6 @@ public record StackSummaryModel : SummaryData
 {
     public required string Title { get; init; }
     public StackStatus Status { get; init; }
-    public DevOpsWorkItemState? DevOpsWorkItemState { get; init; }
     public DateTime FirstOccurrence { get; init; }
     public DateTime LastOccurrence { get; init; }
     public long Total { get; init; }
