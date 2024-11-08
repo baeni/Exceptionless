@@ -11,7 +11,6 @@ using Exceptionless.Core.Queues.Models;
 using Exceptionless.Core.Repositories;
 using Exceptionless.Core.Repositories.Configuration;
 using Exceptionless.Core.Repositories.Queries;
-using Exceptionless.Core.Services;
 using Exceptionless.Core.Utility;
 using Exceptionless.DateTimeExtensions;
 using Exceptionless.Web.Models;
@@ -36,7 +35,6 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
     private readonly IStackRepository _stackRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IWebHookRepository _webHookRepository;
-    private readonly IDevOpsWorkItemService _devOpsWorkItemService;
     private readonly SemanticVersionParser _semanticVersionParser;
     private readonly WebHookDataPluginManager _webHookDataPluginManager;
     private readonly ICacheClient _cache;
@@ -51,7 +49,6 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
         IProjectRepository projectRepository,
         IEventRepository eventRepository,
         IWebHookRepository webHookRepository,
-        IDevOpsWorkItemService devOpsWorkItemService,
         WebHookDataPluginManager webHookDataPluginManager,
         IQueue<WebHookNotification> webHookNotificationQueue,
         ICacheClient cacheClient,
@@ -70,7 +67,6 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
         _projectRepository = projectRepository;
         _eventRepository = eventRepository;
         _webHookRepository = webHookRepository;
-        _devOpsWorkItemService = devOpsWorkItemService;
         _webHookDataPluginManager = webHookDataPluginManager;
         _webHookNotificationQueue = webHookNotificationQueue;
         _cache = cacheClient;
@@ -130,7 +126,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
             foreach (var stack in stacks)
             {
                 stack.MarkFixed(semanticVersion, _timeProvider); 
-                await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(stack.Id, StackStatus.Fixed);
+                //await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(stack.Id, StackStatus.Fixed);
             }
 
             await _stackRepository.SaveAsync(stacks);
@@ -162,7 +158,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
             id = id.Substring(id.LastIndexOf('/') + 1);
 
         var result = await MarkFixedAsync(id);
-        await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(id, StackStatus.Fixed);
+        //await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(id, StackStatus.Fixed);
 
         return result;
     }
@@ -195,7 +191,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
                 stack.FixedInVersion = null;
                 stack.DateFixed = null;
 
-                await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(stack.Id, StackStatus.Snoozed);
+                //await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(stack.Id, StackStatus.Snoozed);
             }
 
             await _stackRepository.SaveAsync(stacks);
@@ -288,74 +284,6 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
         return StatusCode(StatusCodes.Status204NoContent);
     }
 
-    // Abschlussprojekt
-    /// <summary>
-    /// Add DevOps Work Item linking
-    /// </summary>
-    /// <param name="id">The identifier of the stack.</param>
-    /// <param name="workItemId">The identifier of the work item in DevOps.</param>
-    /// <response code="200">The DevOps Work Item linking was created.</response>
-    /// <response code="404">The stack could not be found.</response>
-    /// <response code="400">The state was either not procided, or provided in an invalid format.</response>
-    [HttpPost("{id:objectid}/link-devops-work-item")]
-    [Consumes("application/json")]
-    [Authorize(Policy = AuthorizationRoles.UserPolicy)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> LinkDevOpsWorkItemAsync(string id, ValueFromBody<string?> workItemId)
-    {
-        if (string.IsNullOrWhiteSpace(id))
-            return BadRequest();
-
-        if (string.IsNullOrWhiteSpace(workItemId?.Value))
-            return BadRequest();
-
-        return await _devOpsWorkItemService.LinkWorkItemToStack(id, workItemId.Value.Trim(), _timeProvider);
-    }
-
-    /// <summary>
-    /// Remove DevOps Work Item linking
-    /// </summary>
-    /// <param name="id">The identifier of the stack.</param>
-    /// <response code="204">The DevOps Work Item linking was removed.</response>
-    /// <response code="404">The stack could not be found.</response>
-    [HttpPost("{id:objectid}/unlink-devops-work-item")]
-    [Consumes("application/json")]
-    [Authorize(Policy = AuthorizationRoles.UserPolicy)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UnlinkDevOpsWorkItemAsync(string id)
-    {
-        if (string.IsNullOrWhiteSpace(id))
-            return BadRequest();
-
-        return await _devOpsWorkItemService.UnlinkWorkItemFromStack(id);
-    }
-
-    /// <summary>
-    /// This controller action is called by azure devops to notify when changes to work items occur.
-    /// </summary>
-    [AllowAnonymous]
-    [HttpPost("work-item-state-changed")]
-    [Consumes("application/json")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ApiExplorerSettings(IgnoreApi = true)]
-    public async Task<IActionResult> WorkItemStateChangedAsync(JObject data)
-    {
-        var workItemId = data["resource"]?["workItemId"]?.ToString().Trim();
-        var newWorkItemStateStr = data["resource"]?["fields"]?["System.State"]?["newValue"]?.ToString().Trim();
-        if (string.IsNullOrEmpty(workItemId) || string.IsNullOrEmpty(newWorkItemStateStr))
-            return BadRequest("Invalid data.");
-
-        var newWorkItemState = DevOpsWorkItemStateExtensions.FromDevOpsString(newWorkItemStateStr);
-
-        return await _devOpsWorkItemService.UpdateLocalWorkItemState(workItemId, newWorkItemState, _timeProvider);
-    }
-    // -
-
     /// <summary>
     /// Mark future occurrences as critical
     /// </summary>
@@ -444,7 +372,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
                 if (status != StackStatus.Snoozed)
                     stack.SnoozeUntilUtc = null;
 
-                await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(stack.Id, status);
+                //await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(stack.Id, status);
             }
 
             await _stackRepository.SaveAsync(stacks);
@@ -706,7 +634,7 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
                 Data = data.Data,
                 Title = stack.Title,
                 Status = stack.Status,
-                DevOpsWorkItemState = stack.DevOpsWorkItemState,
+                //DevOpsWorkItemState = stack.DevOpsWorkItemState,
                 FirstOccurrence = term.Aggregations.Min<DateTime>("min_date").Value,
                 LastOccurrence = term.Aggregations.Max<DateTime>("max_date").Value,
                 Total = (long)(term.Aggregations.Sum("sum_count").Value ?? term.Total.GetValueOrDefault()),
