@@ -157,11 +157,6 @@
             <div class="panel-heading">
                 {{::'Stack' | translate}}
                 <span class="labels">
-                    <!-- Abschlussprojekt -->
-                    <a class="label label-info" ng-if="vm.stack.dev_ops_work_item_id != null" ng-href="https://dev.azure.com/bsaalfeld/Exceptionless-Extension/_workitems/edit/{{vm.stack.dev_ops_work_item_id}}" target="_blank">
-                        {{::'Linked to DevOps Work Item' | translate}} ({{vm.stack.dev_ops_work_item_state | translate}})
-                    </a>
-                    <!---->
                     <span class="label label-success"
                           ng-if="vm.stack.fixed_in_version && vm.stack.status !== 'regressed'">
                         <span class="hidden-xs">{{'Fixed_With_Version' | translate : vm.stack}}</span>
@@ -216,24 +211,6 @@
                                     translate}}</a
                                 >
                             </li>
-                            <!-- Abschlussprojekt -->
-                            <li>
-                                <a
-                                    ng-if="!vm.stack.dev_ops_work_item_id"
-                                    ng-click="vm.linkDevOpsWorkItem()"
-                                    title="{{::'Link a Work Item located in Azure DevOps.' | translate}}"
-                                    ><i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{::'Link DevOps Work Item' |
-                                    translate}}</a
-                                >
-                                <a
-                                    ng-if="vm.stack.dev_ops_work_item_id"
-                                    ng-click="vm.unlinkDevOpsWorkItem()"
-                                    title="{{::'Link a Work Item located in Azure DevOps.' | translate}}"
-                                    ><i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{::'Unlink DevOps Work Item' |
-                                    translate}}</a
-                                >
-                            </li>
-                            <!---->
                             <li class="divider"></li>
                             <li>
                                 <a ng-click="vm.remove()" title="{{::'Delete this stack' | translate}}"
