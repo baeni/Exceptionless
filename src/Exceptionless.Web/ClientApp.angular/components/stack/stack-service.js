@@ -9,17 +9,15 @@
                     .one("add-link")
                     .customPOST({ value: url }, undefined, undefined, {});
             }
-
-            // Abschlussprojekt
-            function linkDevOpsWorkItem(id, workItemId) {
-                return Restangular.one("stacks", id)
-                    .one("link-devops-work-item")
-                    .customPOST({ value: workItemId }, undefined, undefined, undefined, {}); 
-            }
-            //
-
+            
             function changeStatus(id, status) {
-                return Restangular.one("stacks", id).post("change-status", null, { status: status });
+                return Restangular.one("stacks", id)
+                    .post("change-status", null, { status })
+                    .then(response => {
+                        notifyStatusChanges(id, status);
+
+                        return response;
+                    });
             }
 
             function getAll(options) {
@@ -104,11 +102,23 @@
             }
 
             function markFixed(id, version) {
-                return Restangular.one("stacks", id).post("mark-fixed", null, { version: version });
+                return Restangular.one("stacks", id)
+                    .post("mark-fixed", null, { version: version })
+                    .then(response => {
+                        notifyStatusChanges(id, "fixed");
+
+                        return response;
+                    });
             }
 
             function markSnoozed(id, snoozeUntilUtc) {
-                return Restangular.one("stacks", id).post("mark-snoozed", null, { snoozeUntilUtc: snoozeUntilUtc });
+                return Restangular.one("stacks", id)
+                    .post("mark-snoozed", null, { snoozeUntilUtc: snoozeUntilUtc })
+                    .then(response => {
+                        notifyStatusChanges(id, "snoozed");
+
+                        return response;
+                    });
             }
 
             function promote(id) {
@@ -125,17 +135,16 @@
                     .customPOST({ value: url }, undefined, undefined, {});
             }
 
-            // Abschlussprojekt
-            function unlinkDevOpsWorkItem(id) {
-                return Restangular.one("stacks", id)
-                    .one("unlink-devops-work-item")
-                    .customPOST(undefined, undefined, {});
+            function notifyStatusChanges(id, status) {
+                var customRestangular = Restangular.withConfig(function (RestangularConfigurer) {
+                    RestangularConfigurer.setBaseUrl("/api/devops");
+                });
+
+                customRestangular.all("/stack-status-changed").post({ stack_id: id, new_status: status });
             }
-            // -
 
             var service = {
                 addLink: addLink,
-                linkDevOpsWorkItem: linkDevOpsWorkItem,
                 changeStatus: changeStatus,
                 getAll: getAll,
                 getById: getById,
@@ -148,8 +157,7 @@
                 markSnoozed: markSnoozed,
                 promote: promote,
                 remove: remove,
-                removeLink: removeLink,
-                unlinkDevOpsWorkItem: unlinkDevOpsWorkItem
+                removeLink: removeLink
             };
 
             return service;
