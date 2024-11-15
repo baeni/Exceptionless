@@ -9,7 +9,7 @@ public interface IDevOpsWorkItemService
 
     Task<IResult> UnlinkStackFromWorkItem(string stackId);
 
-    Task<IResult> UpdateStackStatus(string stackId, StackStatus newStatus);
+    Task<IResult> UpdateStackStatus(Stack stack, StackStatus newStatus);
 
     Task<IResult> UpdateWorkItemStatus(string workItemId, WorkItemStatus newStatus);
 }

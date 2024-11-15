@@ -73,20 +73,12 @@ public class DevOpsWorkItemService : IDevOpsWorkItemService
         return Results.NoContent();
     }
 
-    public async Task<IResult> UpdateStackStatus(string stackId, StackStatus newStatus)
+    public async Task<IResult> UpdateStackStatus(Stack stack, StackStatus newStatus)
     {
-        var stack = await _stackRepository.GetByIdAsync(stackId);
-        if (stack is null)
-        {
-            var errMsg = string.Format("Stack {0: stackID} could not be found", stackId);
-            _logger.LogError(errMsg);
-            return Results.NotFound(errMsg);
-        }
-
         stack.Status = newStatus;
         await _stackRepository.SaveAsync(stack);
 
-        _logger.LogInformation("Updated status of stack {stackId} to {newStatus}", stackId, newStatus);
+        _logger.LogInformation("Updated status of stack {stackId} to {newStatus}", stack.Id, newStatus);
         return Results.NoContent();
     }
 
