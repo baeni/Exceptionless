@@ -126,7 +126,6 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
             foreach (var stack in stacks)
             {
                 stack.MarkFixed(semanticVersion, _timeProvider); 
-                //await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(stack.Id, StackStatus.Fixed);
             }
 
             await _stackRepository.SaveAsync(stacks);
@@ -158,7 +157,6 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
             id = id.Substring(id.LastIndexOf('/') + 1);
 
         var result = await MarkFixedAsync(id);
-        //await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(id, StackStatus.Fixed);
 
         return result;
     }
@@ -190,8 +188,6 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
                 stack.SnoozeUntilUtc = snoozeUntilUtc;
                 stack.FixedInVersion = null;
                 stack.DateFixed = null;
-
-                //await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(stack.Id, StackStatus.Snoozed);
             }
 
             await _stackRepository.SaveAsync(stacks);
@@ -371,8 +367,6 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
 
                 if (status != StackStatus.Snoozed)
                     stack.SnoozeUntilUtc = null;
-
-                //await _devOpsWorkItemService.UpdateRemoteWorkItemStateIfLinked(stack.Id, status);
             }
 
             await _stackRepository.SaveAsync(stacks);
@@ -634,7 +628,6 @@ public class StackController : RepositoryApiController<IStackRepository, Stack, 
                 Data = data.Data,
                 Title = stack.Title,
                 Status = stack.Status,
-                //DevOpsWorkItemState = stack.DevOpsWorkItemState,
                 FirstOccurrence = term.Aggregations.Min<DateTime>("min_date").Value,
                 LastOccurrence = term.Aggregations.Max<DateTime>("max_date").Value,
                 Total = (long)(term.Aggregations.Sum("sum_count").Value ?? term.Total.GetValueOrDefault()),
