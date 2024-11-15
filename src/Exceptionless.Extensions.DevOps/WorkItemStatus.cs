@@ -18,7 +18,7 @@ public static class WorkItemStatusExtensions
         return stackStatusStr.ToLower() switch
         {
             "open" or "snoozed" => WorkItemStatus.ToDo,
-            "in progress" => WorkItemStatus.Doing,
+            "doing" => WorkItemStatus.Doing,
             "fixed" or "regressed" or "ignored" or "discarded" => WorkItemStatus.Done,
             _ => null
         };
@@ -30,7 +30,7 @@ public static class WorkItemStatusExtensions
         return workItemStatusStr.ToLower() switch
         {
             "to do" => StackStatus.Open,
-            "doing" => StackStatus.InProgress,
+            "doing" => StackStatus.Doing,
             "done" => StackStatus.Fixed,
             _ => null
         };
