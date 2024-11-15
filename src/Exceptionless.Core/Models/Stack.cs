@@ -127,7 +127,7 @@ public class Stack : IOwnedByOrganizationAndProjectWithIdentity, IHaveDates, ISu
 public enum StackStatus
 {
     [EnumMember(Value = "open")] Open,
-    [EnumMember(Value = "in progress")] InProgress,
+    [EnumMember(Value = "doing")] Doing,
     [EnumMember(Value = "fixed")] Fixed,
     [EnumMember(Value = "regressed")] Regressed,
     [EnumMember(Value = "snoozed")] Snoozed,
