@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Exceptionless.Extensions.DevOps.Modules;
+namespace Exceptionless.Extension.DevOps.Modules;
 
 public interface IModule
 {

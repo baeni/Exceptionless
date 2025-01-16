@@ -1010,6 +1010,7 @@
                     vm.updateFixed = updateFixed;
                     vm.updateSnooze = updateSnooze;
                     vm.updateIgnore = updateIgnore;
+                    //vm.isLinkedToDevOps = isLinkedToDevOps;
 
                     get().then(executeAction);
                 };

@@ -30,9 +30,9 @@ Serilog:
   - WithThreadId
 
 DevOps:
-  Pat: "<devops-pat>"
-  Organization: "<devops-organization>"
-  Project: "<devops-project>"
+  Pat: "<Azure DevOps Personal Access Token>"
+  Organization: "<Azure DevOps Organisationsname>"
+  Project: "<Azure DevOps Projektname>"
 
 Apm:
   ServiceName: exceptionless

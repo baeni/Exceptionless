@@ -62,8 +62,8 @@ Content-Type: application/json
 
 ### post a sample text event
 
-POST {{apiUrl}}/projects/{{projectId}}/events
-Authorization: Bearer {{token}}
+POST http://localhost:5173/api/v2/projects/67371a3de1f760bae8bc792d/events
+Authorization: Bearer HbhMsBRRCHZv4RN19sUmNka9W98YvphHxUhcEzrO
 Content-Type: text/plain
 
 Hello World!

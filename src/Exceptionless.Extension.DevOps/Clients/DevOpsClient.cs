@@ -1,9 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
+using Exceptionless.Extension.DevOps.Exceptions;
+using Exceptionless.Extension.DevOps.ExtensionMethods;
 
-namespace Exceptionless.Extensions.DevOps.Clients;
+namespace Exceptionless.Extension.DevOps.Clients;
 
 public class DevOpsClient : IDevOpsClient
 {
@@ -16,7 +17,7 @@ public class DevOpsClient : IDevOpsClient
         _pat = pat;
     }
 
-    public async Task<WorkItemStatus?> GetWorkItemStatus(string workItemId)
+    public async Task<WorkItemStatus> GetWorkItemStatus(string workItemId)
     {
         var httpClient = _httpClientFactory.CreateClient("devops-odata");
         var encodedPat = Convert.ToBase64String(Encoding.ASCII.GetBytes($":{_pat}"));
@@ -25,10 +26,15 @@ public class DevOpsClient : IDevOpsClient
         request.Headers.Authorization = new AuthenticationHeaderValue("Basic", encodedPat);
 
         var response = await httpClient.SendAsync(request);
-        response.EnsureSuccessStatusCode();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new GetWorkItemStatusException($"Failed to get status for work item {workItemId} from DevOps");
+        }
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
 
+        WorkItemStatus? workItemStatus = null;
         using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
         {
             var root = doc.RootElement;
@@ -41,15 +47,20 @@ public class DevOpsClient : IDevOpsClient
 
                 if (!string.IsNullOrEmpty(workItemStatusStr))
                 {
-                    return workItemStatusStr.ToWorkItemStatus();
+                    workItemStatus = WorkItemStatusExtensions.FromString(workItemStatusStr);
                 }
             }
         }
 
-        return null;
+        if (!workItemStatus.HasValue)
+        {
+            throw new GetWorkItemStatusException($"Failed to parse work item status for work item {workItemId} from DevOps");
+        }
+
+        return workItemStatus.Value;
     }
 
-    public async Task<IResult> UpdateWorkItemStatus(string workItemId, WorkItemStatus newStatus)
+    public async Task UpdateWorkItemStatus(string workItemId, WorkItemStatus newStatus)
     {
         var httpClient = _httpClientFactory.CreateClient("devops-services");
         var encodedPat = Convert.ToBase64String(Encoding.ASCII.GetBytes($":{_pat}"));
@@ -64,6 +75,9 @@ public class DevOpsClient : IDevOpsClient
 
         var response = await httpClient.SendAsync(request);
 
-        return Results.StatusCode((int)response.StatusCode);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new UpdateWorkItemStatusException($"Failed to update work item {workItemId} to {nameof(newStatus)} in DevOps");
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Exceptionless.Core;
 using Exceptionless.Core.Authorization;
 using Exceptionless.Core.Serialization;
+using Exceptionless.Extension.DevOps.Middleware;
 using Exceptionless.Web.Extensions;
 using Exceptionless.Web.Hubs;
 using Exceptionless.Web.Security;
@@ -172,7 +173,9 @@ public class Startup
             };
         });
 
-        Exceptionless.Extensions.DevOps.Bootstrapper.RegisterServices(services, appOptions, Log.Logger.ToLoggerFactory());
+        // Abschlussprojekt
+        Extension.DevOps.Bootstrapper.RegisterServices(services, appOptions, Log.Logger.ToLoggerFactory());
+        // -
     }
 
     public void Configure(IApplicationBuilder app)
@@ -294,6 +297,10 @@ public class Startup
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        // Abschlussprojekt
+        app.UseMiddleware<DevOpsSyncMiddleware>();
+        // -
 
         app.UseMiddleware<ProjectConfigMiddleware>();
         app.UseMiddleware<RecordSessionHeartbeatMiddleware>();

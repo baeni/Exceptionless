@@ -170,71 +170,61 @@
 
                 <div class="btn-toolbar pull-right hidden-print" role="toolbar" aria-label="Stack Options">
                     <div class="btn-group btn-group-sm" role="group">
-                        <button
-                            type="button"
-                            role="button"
-                            class="btn btn-default dropdown-toggle"
-                            data-toggle="dropdown"
-                            aria-expanded="false"
-                        >
+                        <button type="button"
+                                role="button"
+                                class="btn btn-default dropdown-toggle"
+                                data-toggle="dropdown"
+                                aria-expanded="false">
                             <span class="visible-xs-inline"><i class="fa fa-fw fa-gear fa-size-sm"></i></span>
                             <span class="hidden-xs">{{::'Options' | translate}}</span>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right" role="menu">
                             <li>
-                                <a
-                                    ng-click="vm.updateCritical()"
-                                    title="{{::'All future occurrences will be marked as critical' | translate}}"
-                                    ><i
-                                        ng-if="vm.showActionIcons()"
-                                        class="fa fa-fw"
-                                        ng-class="{'fa-check': vm.stack.occurrences_are_critical}"
-                                    ></i
-                                    >{{::'Future Occurrences Are Critical' | translate}}</a
-                                >
+                                <a ng-click="vm.updateCritical()"
+                                   title="{{::'All future occurrences will be marked as critical' | translate}}">
+                                    <i ng-if="vm.showActionIcons()"
+                                       class="fa fa-fw"
+                                       ng-class="{'fa-check': vm.stack.occurrences_are_critical}"></i>{{::'Future Occurrences Are Critical' | translate}}
+                                </a>
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a
-                                    ng-click="vm.promoteToExternal()"
-                                    title="{{::'Used to promote stacks to external systems.' | translate}}"
-                                    ><i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{::'Promote To External' |
-                                    translate}}</a
-                                >
+                                <a ng-click="vm.promoteToExternal()"
+                                   title="{{::'Used to promote stacks to external systems.' | translate}}">
+                                    <i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{
+::'Promote To External' |
+                                    translate
+                                    }}
+                                </a>
                             </li>
                             <li>
-                                <a
-                                    ng-click="vm.addReferenceLink()"
-                                    title="{{::'Add a reference link to an external resource.' | translate}}"
-                                    ><i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{::'Add Reference Link' |
-                                    translate}}</a
-                                >
+                                <a ng-click="vm.addReferenceLink()"
+                                   title="{{::'Add a reference link to an external resource.' | translate}}">
+                                    <i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{
+::'Add Reference Link' |
+                                    translate
+                                    }}
+                                </a>
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a ng-click="vm.remove()" title="{{::'Delete this stack' | translate}}"
-                                    ><i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{::'Delete' | translate}}</a
-                                >
+                                <a ng-click="vm.remove()" title="{{::'Delete this stack' | translate}}"><i ng-if="vm.showActionIcons()" class="fa fa-fw"></i>{{::'Delete' | translate}}</a>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div
-                    class="btn-toolbar pull-right hidden-print"
-                    style="margin-right: 10px"
-                    role="toolbar"
-                    aria-label="Status"
-                >
+                <div class="btn-toolbar pull-right hidden-print"
+                     style="margin-right: 10px"
+                     role="toolbar"
+                     aria-label="Status">
                     <div class="btn-group btn-group-sm" role="group">
-                        <button
-                            type="button"
-                            role="button"
-                            class="btn btn-default dropdown-toggle"
-                            data-toggle="dropdown"
-                            aria-expanded="false"
-                        >
+                        <button type="button"
+                                role="button"
+                                class="btn btn-default dropdown-toggle"
+                                data-toggle="dropdown"
+                                aria-expanded="false">
                             <span>{{::'Status' | translate}}: {{vm.stack.status | translate}}</span>
                             <span class="caret"></span>
                         </button>
@@ -274,12 +264,10 @@
                     </div>
                 </div>
 
-                <log-level
-                    ng-if="vm.stack.type == 'log'"
-                    class="pull-right"
-                    project-id="vm.project.id"
-                    source="vm.stack.signature_info.Source"
-                ></log-level>
+                <log-level ng-if="vm.stack.type == 'log'"
+                           class="pull-right"
+                           project-id="vm.project.id"
+                           source="vm.stack.signature_info.Source"></log-level>
             </div>
 
             <div class="panel-body">

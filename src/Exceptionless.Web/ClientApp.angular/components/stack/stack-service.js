@@ -11,13 +11,7 @@
             }
             
             function changeStatus(id, status) {
-                return Restangular.one("stacks", id)
-                    .post("change-status", null, { status })
-                    .then(response => {
-                        notifyStatusChanges(id, status);
-
-                        return response;
-                    });
+                return Restangular.one("stacks", id).post("change-status", null, { status });
             }
 
             function getAll(options) {
@@ -102,23 +96,11 @@
             }
 
             function markFixed(id, version) {
-                return Restangular.one("stacks", id)
-                    .post("mark-fixed", null, { version: version })
-                    .then(response => {
-                        notifyStatusChanges(id, "fixed");
-
-                        return response;
-                    });
+                return Restangular.one("stacks", id).post("mark-fixed", null, { version: version });
             }
 
             function markSnoozed(id, snoozeUntilUtc) {
-                return Restangular.one("stacks", id)
-                    .post("mark-snoozed", null, { snoozeUntilUtc: snoozeUntilUtc })
-                    .then(response => {
-                        notifyStatusChanges(id, "snoozed");
-
-                        return response;
-                    });
+                return Restangular.one("stacks", id).post("mark-snoozed", null, { snoozeUntilUtc: snoozeUntilUtc });
             }
 
             function promote(id) {
@@ -133,14 +115,6 @@
                 return Restangular.one("stacks", id)
                     .one("remove-link")
                     .customPOST({ value: url }, undefined, undefined, {});
-            }
-
-            function notifyStatusChanges(id, status) {
-                var customRestangular = Restangular.withConfig(function (RestangularConfigurer) {
-                    RestangularConfigurer.setBaseUrl("/api/devops");
-                });
-
-                customRestangular.all("/stack-status-changed").post({ stack_id: id, new_status: status });
             }
 
             var service = {
